@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>ISOTYPE Test</title>
+
+	<style>
+		.container,
+		.button-group {
+			max-width: 480px;
+		}
+
+		.item {
+			display: -webkit-box;
+			display: -ms-flexbox;
+			display: flex;
+			-webkit-box-pack: center;
+				-ms-flex-pack: center;
+					justify-content: center;
+			-webkit-box-align: center;
+				-ms-flex-align: center;
+					align-items: center;
+			-webkit-box-orient: vertical;
+			-webkit-box-direction: normal;
+				-ms-flex-direction: column;
+					flex-direction: column;
+			width: 150px;
+			height: 150px;
+			margin: 5px;
+		}
+
+		.item-president {
+			background-color: #f04040;
+		}
+
+		.item-vice-president {
+			background-color: #f08080;
+		}
+
+		.item-director {
+			background-color: #90ee90;
+		}
+
+		.item-assistant {
+			background-color: #20b2aa;
+		}
+
+		.item-licensing {
+			background-color: #add8e6;
+		}
+
+		.item-professor {
+			background-color: #b9e;
+		}
+
+		.item-pet {
+			background-color: #f90;
+		}
+
+		.title {
+			font-weight: bold;
+			text-align: center;
+		}
+
+		.match {
+			z-index: 2;
+		}
+
+		.no-match {
+			opacity: 0.5;
+		}
+
+		button {
+			height: 50px;
+			background-color: #fff;
+			border: 1px solid #000;
+			border-radius: 2px;
+			margin: 5px;
+		}
+
+	</style>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://unpkg.com/isotope-layout@3/dist/isotope.pkgd.min.js"></script>
+
+	<script>
+
+		$(document).ready(function() {
+
+			// set up variables
+			var _selectedCategory;
+			var filters = [];
+			var $items = $('#container').find('.item');
+
+			$('.item').each(function () {
+				var filter = $(this).attr('data-directory-filters');
+				var split = filter.split(', ');
+				$(this).addClass(split);
+				split.forEach(function (filter) {
+					filters.push(filter);
+				});
+			});
+
+			function uniqueArray(array) {
+				return filters.filter(function (elem, pos, arr) {
+					return arr.indexOf(elem) == pos;
+				});
+			}
+
+			filters = uniqueArray(filters);
+
+			filters.forEach(function (filter) {
+				$('.sort-by-button-group').append('<button data-sort-by="' + filter + '">' + filter + '</button>');
+			});
+
+			// init Isotope
+			var $container = $('#container').isotope({
+				itemSelector: '.item',
+				getSortData: {
+					selectedCategory: function selectedCategory(itemElem) {
+						return $(itemElem).hasClass(_selectedCategory) ? 0 : 1;
+					}
+				}
+			});
+
+			// sort items on button click
+			$('.sort-by-button-group').on('click', 'button', function () {
+				_selectedCategory = $(this).attr('data-sort-by');
+				if (_selectedCategory === 'original-order') {
+					$items.css({ opacity: 1 });
+					$container.isotope({ sortBy: _selectedCategory, sortAscending: true });
+					return;
+				}
+
+				// change opacity for selected/unselected items
+				var selectedClass = '.' + _selectedCategory;
+				$items.filter(selectedClass).css({ opacity: 1 });
+				$items.not(selectedClass).css({ opacity: 0.35 });
+
+				$container.isotope('updateSortData');
+				$container.isotope({ sortBy: 'selectedCategory' });
+			});
+
+		});
+
+	</script>
+</head>
+<body>
+	<div class="button-group sort-by-button-group">
+	<button data-sort-by="original-order">Reset</button>
+</div>
+
+	<div id="container" class="container">
+		<div class="item item-president" data-directory-filters="president">
+			<div class="name">Jennie</div>
+			<div class="title">President</div>
+		</div>
+		<div class="item item-vice-president" data-directory-filters="vice-president, professor">
+			<div class="name">Linda</div>
+			<div class="title">Vice President & Professor</div>
+		</div>
+		<div class="item item-director" data-directory-filters="director">
+			<div class="name">Abe</div>
+			<div class="title">Director</div>
+		</div>
+		<div class="item item-director" data-directory-filters="director">
+			<div class="name">Johno</div>
+			<div class="title">Director</div>
+		</div>
+		<div class="item item-director" data-directory-filters="director, professor">
+			<div class="name">Jao</div>
+			<div class="title">Director & Professor</div>
+		</div>
+		<div class="item item-assistant" data-directory-filters="assistant">
+			<div class="name">Paul</div>
+			<div class="title">Assistant</div>
+		</div>
+		<div class="item item-assistant" data-directory-filters="assistant, director">
+			<div class="name">Laura</div>
+			<div class="title">Assistant & Director</div>
+		</div>
+		<div class="item item-assistant" data-directory-filters="assistant">
+			<div class="name">Sam</div>
+			<div class="title">Assistant</div>
+		</div>
+		<div class="item item-assistant" data-directory-filters="assistant">
+			<div class="name">Elmer</div>
+			<div class="title">Assistant</div>
+		</div>
+			<div class="item item-assistant" data-directory-filters="assistant, professor">
+			<div class="name">Thomas</div>
+			<div class="title">Assistant & Professor</div>
+		</div>
+		<div class="item item-licensing" data-directory-filters="licensing">
+			<div class="name">Janice</div>
+			<div class="title">Licensing</div>
+		</div>
+		<div class="item item-licensing" data-directory-filters="licensing">
+			<div class="name">Tommy</div>
+			<div class="title">Licensing</div>
+		</div>
+		<div class="item item-licensing" data-directory-filters="licensing">
+			<div class="name">Maurice</div>
+			<div class="title">Licensing</div>
+		</div>
+		<div class="item item-professor" data-directory-filters="professor, licensing">
+			<div class="name">Phoebe</div>
+			<div class="title">Professor & Licensing</div>
+		</div>
+		<div class="item item-professor" data-directory-filters="professor">
+			<div class="name">Jim Bob</div>
+			<div class="title">Professor</div>
+		</div>
+		<div class="item item-pet" data-directory-filters="dog, assistant">
+			<div class="name">Sparky</div>
+			<div class="title">Dog & Assistant</div>
+		</div>
+		<div class="item item-pet" data-directory-filters="cat, tiger">
+			<div class="name">Mittens</div>
+			<div class="title">Cat & Tiger</div>
+		</div>
+		<div class="item item-pet" data-directory-filters="cat">
+			<div class="name">Whiskers</div>
+			<div class="title">Cat</div>
+		</div>
+		<div class="item item-pet" data-directory-filters="fish">
+			<div class="name">Bubbles</div>
+			<div class="title">Fish</div>
+		</div>
+	</div>
+
+</body>
+</html>
